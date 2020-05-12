@@ -1,12 +1,19 @@
-/* eslint-disable prettier/prettier */
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { LineChart, Grid, XAxis, YAxis } from 'react-native-svg-charts';
+import { Circle } from 'react-native-svg';
+import * as shape from 'd3-shape';
+import Tooltip from '../GraphTester/Tooltip';
 
 class App extends React.PureComponent {
+  state = {
+    tooltipX: null,
+    tooltipY: null,
+    tooltipIndex: null,
+  };
 
   calibrateChartWidth(dataLength) {
     var factoredLength = dataLength.length * 20;
@@ -21,12 +28,35 @@ class App extends React.PureComponent {
       50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80,
     ];
 
+    const { tooltipX, tooltipY, tooltipIndex } = this.state;
+
     const contentInset = { top: 20, bottom: 20 };
+
+    const ChartPoints = ({ x, y }) => {
+      return data.map((value, index) => (
+        <Circle
+          key={index}
+          cx={x(index)}
+          cy={y(value)}
+          r={5}
+          stroke={'rgb(134, 65, 244)'}
+          fill={'white'}
+          onPress={() =>
+            this.setState({
+              tooltipX: index,
+              tooltipY: value,
+              tooltipIndex: index,
+            })
+          }
+        />
+      ));
+    };
 
     return (
       <SafeAreaView>
         <View style={styles.chartWrapperView}>
           <YAxis
+            // eslint-disable-next-line react-native/no-inline-styles
             style={{ height: 400, width: 35 }}
             data={data}
             contentInset={contentInset}
@@ -43,12 +73,24 @@ class App extends React.PureComponent {
             indicatorStyle="black"
             style={styles.scrollView}>
             <LineChart
-              style={[styles.lineChart, { width: this.calibrateChartWidth(data) }]}
+              style={[
+                styles.lineChart,
+                { width: this.calibrateChartWidth(data) },
+              ]}
               data={data}
-              svg={{ stroke: 'rgb(134, 65, 244)' }}
-              contentInset={{ top: 20, bottom: 20 }}
-            >
+              svg={{ stroke: '#009acf', strokeWidth: '2' }}
+              curve={shape.curveMonotoneX}
+              contentInset={{ top: 20, bottom: 20 }}>
               <Grid />
+              <ChartPoints />
+              <Tooltip
+                tooltipX={tooltipX}
+                tooltipY={tooltipY}
+                limit={42}
+                unit={'ºC'}
+                index={tooltipIndex}
+                dataLength={data.length}
+              />
             </LineChart>
             <XAxis
               data={data}
@@ -59,7 +101,7 @@ class App extends React.PureComponent {
           </ScrollView>
         </View>
       </SafeAreaView>
-    )
+    );
   }
 }
 
