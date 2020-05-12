@@ -56,7 +56,6 @@ class App extends React.PureComponent {
       <SafeAreaView>
         <View style={styles.chartWrapperView}>
           <YAxis
-            // eslint-disable-next-line react-native/no-inline-styles
             style={{ height: 400, width: 35 }}
             data={data}
             contentInset={contentInset}

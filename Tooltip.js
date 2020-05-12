@@ -36,9 +36,6 @@ const Tooltip = ({
   if (tooltipX === 0 && tooltipY === 0) {
     return null;
   } else {
-    console.log('tooltipX  : : :' + tooltipX);
-    console.log('tooltipY  : : :' + tooltipY);
-
     return (
       <G x={x(tooltipX) - negation} y={y(tooltipY)}>
         <G y={tooltipY > limit ? 10 : -29} x={xAxis}>
